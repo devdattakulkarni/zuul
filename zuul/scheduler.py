@@ -228,6 +228,15 @@ class Scheduler(threading.Thread):
                     f = EventFilter(types=['timer'],
                                     timespecs=toList(trigger['time']))
                     manager.event_filters.append(f)
+            elif 'messaging' in conf_pipeline['trigger']:
+                for trigger in toList(conf_pipeline['trigger']['messaging']):
+                    f = EventFilter(types=toList(trigger['event']),
+                                    branches=toList(trigger.get('branch')),
+                                    refs=toList(trigger.get('ref')),
+                                    approvals={},
+                                    comment_filters=[],
+                                    email_filters=[])
+                    manager.event_filters.append(f)
 
         for project_template in data.get('project-templates', []):
             # Make sure the template only contains valid pipelines
@@ -320,6 +329,10 @@ class Scheduler(threading.Thread):
             layout.projects[config_project['name']] = project
             mode = config_project.get('merge-mode', 'merge-resolve')
             project.merge_mode = model.MERGER_MAP[mode]
+            if 'scm-url' in config_project:
+                project.scm_url = config_project['scm-url']
+            else:
+                project.scm_url = ''
             for pipeline in layout.pipelines.values():
                 if pipeline.name in config_project:
                     job_tree = pipeline.addProject(project)
@@ -368,7 +381,10 @@ class Scheduler(threading.Thread):
                                     merge_root, push_refs,
                                     sshkey, merge_email, merge_name)
         for project in self.layout.projects.values():
-            url = self.triggers['gerrit'].getGitUrl(project)
+            if not project.scm_url:
+                url = self.triggers['gerrit'].getGitUrl(project)
+            else:
+                url = project.scm_url
             self.merger.addProject(project, url)
 
     def setLauncher(self, launcher):

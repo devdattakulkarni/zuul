@@ -1,0 +1,11 @@
+pipelines:
+- name: solum_build
+  manager: IndependentPipelineManager
+  trigger:
+    messaging:
+      event: ref-updated
+projects:
+- name: 'solum/foo'
+  scm-url: 'http://github.com/kraman/test'
+  solum_build:
+   - 'foo-git-update'

@@ -49,10 +49,15 @@ class LayoutSchema(object):
                       'approval': toList(variable_dict),
                       }
 
+    messaging_trigger = {v.Required('event'):
+                         toList(v.Any('ref-updated')),
+                        }
+
     timer_trigger = {v.Required('time'): str}
 
     trigger = v.Required(v.Any({'gerrit': toList(gerrit_trigger)},
-                               {'timer': toList(timer_trigger)}))
+                               {'timer': toList(timer_trigger)},
+                               {'messaging': toList(messaging_trigger)}))
 
     report_actions = {'gerrit': variable_dict,
                       'smtp': {'to': str,
@@ -172,6 +177,7 @@ class LayoutSchema(object):
         project = {'name': str,
                    'merge-mode': v.Any('merge', 'merge-resolve,',
                                        'cherry-pick'),
+                   'scm-url': str,
                    'template': self.validateTemplateCalls,
                    }
 

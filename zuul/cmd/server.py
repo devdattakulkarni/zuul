@@ -116,6 +116,7 @@ class Server(object):
         import zuul.scheduler
         import zuul.launcher.gearman
         import zuul.trigger.gerrit
+        import zuul.trigger.messaging
 
         logging.basicConfig(level=logging.DEBUG)
         self.sched = zuul.scheduler.Scheduler()
@@ -123,6 +124,7 @@ class Server(object):
         self.sched.registerReporter(None, 'smtp')
         self.sched.registerTrigger(None, 'gerrit')
         self.sched.registerTrigger(None, 'timer')
+        self.sched.registerTrigger(None, 'messaging')
         layout = self.sched.testConfig(self.config.get('zuul',
                                                        'layout_config'))
         if not job_list_path:
@@ -171,6 +173,7 @@ class Server(object):
         import zuul.reporter.smtp
         import zuul.trigger.gerrit
         import zuul.trigger.timer
+        import zuul.trigger.messaging
         import zuul.webapp
         import zuul.rpclistener
 
@@ -185,6 +188,7 @@ class Server(object):
         gearman = zuul.launcher.gearman.Gearman(self.config, self.sched)
         gerrit = zuul.trigger.gerrit.Gerrit(self.config, self.sched)
         timer = zuul.trigger.timer.Timer(self.config, self.sched)
+        messaging = zuul.trigger.messaging.Messaging(self.config, self.sched)
         webapp = zuul.webapp.WebApp(self.sched)
         rpc = zuul.rpclistener.RPCListener(self.config, self.sched)
         gerrit_reporter = zuul.reporter.gerrit.Reporter(gerrit)
@@ -202,6 +206,7 @@ class Server(object):
         self.sched.setLauncher(gearman)
         self.sched.registerTrigger(gerrit)
         self.sched.registerTrigger(timer)
+        self.sched.registerTrigger(messaging)
         self.sched.registerReporter(gerrit_reporter)
         self.sched.registerReporter(smtp_reporter)
 

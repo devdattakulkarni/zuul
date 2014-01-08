@@ -129,10 +129,13 @@ class Gerrit(object):
         else:
             port = 29418
         self.gerrit = gerrit.Gerrit(self.server, user, port, sshkey)
-        self.gerrit.startWatching()
         self.gerrit_connector = GerritEventConnector(
             self.gerrit, sched, self)
-        self.gerrit_connector.start()
+
+        if (self.config.has_option('gerrit', 'enabled') and
+            self.config.getboolean('gerrit', 'enabled')):
+            self.gerrit.startWatching()
+            self.gerrit_connector.start()
 
     def stop(self):
         self.gerrit_connector.stop()
