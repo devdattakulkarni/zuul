@@ -1,0 +1,15 @@
+* Run devstack (for rabbitmq)
+* Create a virt-env for zuul
+* Source virt-env environment
+* Within the virt-env create the following dirs:
+	./etc/zuul
+	./var/log/zuul
+	./var/run/zuul
+* Copy files from zuul_configs into the etc directory
+* Update config files with correct directory path
+* Run zuul with command:
+	zuul-server -c /dir/to/zuul.conf -d
+* Run gearman client: gearman-test.py
+* Trigger a job with trigger-job.py
+
+** You may need to correct rabbitmq password in the trigger/zuul files.
