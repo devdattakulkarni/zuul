@@ -19,6 +19,7 @@ from oslo import messaging
 from zuul.model import TriggerEvent
 import threading
 
+
 class MessagingTriggerEndpoint(object):
     log = logging.getLogger("zuul.MessagingEndpoint")
 
@@ -38,13 +39,15 @@ class MessagingTriggerEndpoint(object):
         self.server.sched.addEvent(event)
         return "ok"
 
+
 class MessagingTriggerServer(threading.Thread):
     log = logging.getLogger("zuul.rpc.server")
 
     def __init__(self, server):
         super(MessagingTriggerServer, self).__init__()
         if server.config.has_option('messaging', 'message_queue_url'):
-            transport = messaging.get_transport(cfg.CONF, server.config.get('messaging', 'message_queue_url'))
+            srv_msg_cfg = server.config.get('messaging', 'message_queue_url')
+            transport = messaging.get_transport(cfg.CONF, srv_msg_cfg)
         else:
             transport = messaging.get_transport(cfg.CONF)
         target = messaging.Target(topic='zuul', server='trigger')
@@ -59,6 +62,7 @@ class MessagingTriggerServer(threading.Thread):
 
     def stop(self):
         self.server.stop()
+
 
 class Messaging(object):
     name = 'messaging'

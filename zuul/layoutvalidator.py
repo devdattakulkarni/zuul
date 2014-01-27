@@ -49,9 +49,7 @@ class LayoutSchema(object):
                       'approval': toList(variable_dict),
                       }
 
-    messaging_trigger = {v.Required('event'):
-                         toList(v.Any('ref-updated')),
-                        }
+    messaging_trigger = {v.Required('event'): toList(v.Any('ref-updated')), }
 
     timer_trigger = {v.Required('time'): str}
 

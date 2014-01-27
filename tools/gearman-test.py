@@ -34,9 +34,12 @@ def task_listener_git_update(gearman_worker, gearman_job):
     number = str(uuid.uuid4())
     manager = 'solum_job_manager'
     data = ZuulData(gearman_job.data)
-    gearman_worker.send_job_data(gearman_job, json.dumps(dict(name=name, number=number, manager=manager)))
+    gearman_worker.send_job_data(gearman_job,
+                                 json.dumps(dict(name=name,
+                                                 number=number,
+                                                 manager=manager)))
     gearman_worker.send_job_status(gearman_job, 0, 100)
-    print data #do stuff
+    print data    # do stuff
     gearman_worker.send_job_status(gearman_job, 100, 100)
     gearman_worker
     return 'SUCCESS'
